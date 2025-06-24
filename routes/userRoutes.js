@@ -16,6 +16,12 @@ router.patch(
   authController.updatePassword
 );
 
+// to update current user data
+router.patch('/updateMe', authController.protect, userController.updateMe);
+
+// to delete current user
+router.delete('/deleteMe', authController.protect, userController.deleteMe);
+
 router
   .route('/')
   .get(userController.getAllUser)
