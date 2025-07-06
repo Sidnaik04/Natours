@@ -7,6 +7,7 @@ const hpp = require('hpp');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
 const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./controllers/errorControllers');
 
@@ -76,9 +77,10 @@ app.post('/', (req, res) => {
 });
 */
 
-//MAIN ROUTES
+//MAIN ROUTES => mouting
 app.use('/api/v1/tours', tourRouter); //mounting routers
 app.use('/api/v1/users', userRouter); //mounting routers
+app.use('/api/v1/reviews', reviewRouter); //mounting routers
 
 // to handle unhandled routes
 app.all('*', (req, res, next) => {

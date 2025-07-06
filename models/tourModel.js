@@ -11,7 +11,10 @@ const tourSchema = new mongoose.Schema(
       unique: true, // name should be unique
       trim: true,
       maxLength: [40, 'A tour name must have less or equal to 40 characters'], //validators
-      minLength: [10, 'A tour name must have greater or equal to 10 characters'],
+      minLength: [
+        10,
+        'A tour name must have greater or equal to 10 characters',
+      ],
       // validate: [validator.isAlpha, 'A Name should have valid characters'],
     },
     slug: String, // for slugify
@@ -79,6 +82,38 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // locations modelling
+    startLocations: {
+      // GeoJson
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      adderess: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    // guides -> child referencing
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     // schema object for options
@@ -107,6 +142,15 @@ tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
 
   this.start = Date.now();
+  next();
+});
+
+// To populate guides field
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt -passwordResetExpires -passwordResetToken', //diselect field which is not required
+  });
   next();
 });
 
