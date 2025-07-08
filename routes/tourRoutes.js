@@ -17,17 +17,31 @@ router
 
 // aggregation route
 router.route('/tour-stats').get(tourController.getTourStats);
-router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
+router
+  .route('/monthly-plan/:year')
+  .get(
+    authControllers.protect,
+    authControllers.restrictTo('admin', 'lead-guide', 'guide'),
+    tourController.getMonthlyPlan
+  );
 
 router
   .route('/')
-  .get(authControllers.protect, tourController.getAllTours)
-  .post(tourController.createTour);
+  .get(tourController.getAllTours)
+  .post(
+    authControllers.protect,
+    authControllers.restrictTo('admin', 'lead-guide'),
+    tourController.createTour
+  );
 
 router
   .route('/:id')
   .get(tourController.getTour)
-  .patch(tourController.updateTour)
+  .patch(
+    authControllers.protect,
+    authControllers.restrictTo('admin', 'lead-guide'),
+    tourController.updateTour
+  )
   .delete(
     authControllers.protect,
     authControllers.restrictTo('admin', 'lead-guide'), //only admin can access this route
