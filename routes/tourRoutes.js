@@ -25,6 +25,15 @@ router
     tourController.getMonthlyPlan
   );
 
+// tour withing certain radius
+router
+  .route('/tours-within/:distance/center/:latlng/unit/:unit')
+  .get(tourController.getToursWithin);
+// or -> /tours-within?distance=42&center=-40,45&unit=mi -> this we do usually
+//  /tours-within/42/center/-40,45/unit/mi -> this we will use now
+
+router.route('/distances/:latlng/unit/:unit').get(tourController.getDistances);
+
 router
   .route('/')
   .get(tourController.getAllTours)
