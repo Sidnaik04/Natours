@@ -9,7 +9,14 @@ const router = express.Router({ mergeParams: true });
 router.route('/').get(reviewController.getAllReviews).post(
   authControllers.protect,
   authControllers.restrictTo('user'), //only authenticated users should be allowed to review
+  reviewController.setTourUserIds,
   reviewController.createReview
 );
+
+router
+  .route('/:id')
+  .get(reviewController.getReview)
+  .patch(reviewController.updateReview)
+  .delete(reviewController.deleteReview);
 
 module.exports = router;
