@@ -4,14 +4,25 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
+const path = require('path');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
-const AppError = require('./utils/AppError');
+const viewRouter = require('./routes/viewRoutes');
+const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorControllers');
 
 const app = express();
+
+app.set('view engine', 'pug');
+
+// pug engine
+app.set('views', path.join((__dirname, 'views')));
+
+// Serving static files
+// app.use(express.static(`${__dirname}/public`));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // GLOBAL MIDDLEWARE
 // Set security HTTP Header
@@ -32,9 +43,6 @@ app.use('/api', limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' })); //inbuilt middleware
-
-// Serving static files
-app.use(express.static(`${__dirname}/public`));
 
 // Data Sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -81,6 +89,7 @@ app.post('/', (req, res) => {
 app.use('/api/v1/tours', tourRouter); //mounting routers
 app.use('/api/v1/users', userRouter); //mounting routers
 app.use('/api/v1/reviews', reviewRouter); //mounting routers
+app.use('/', viewRouter);
 
 // to handle unhandled routes
 app.all('*', (req, res, next) => {
